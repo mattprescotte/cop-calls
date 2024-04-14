@@ -1,0 +1,256 @@
+* {
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: 'Robot9000';
+    src: url('./fonts/Robot9000.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    margin: 0;
+}
+
+.nav {
+    background-color: #121217;
+    color: white;
+    display: flex;
+    font: 20px Poppins, monospace;
+    justify-content: space-between;
+    align-items: stretch;
+    padding: 0 1rem;
+    gap: 2rem;
+}
+
+.nav ul {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    list-style-type: none;
+    gap: 1rem;
+}
+
+.site-title {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+}
+
+.site-title img {
+    height: 70px; /* or your desired height */
+    width: auto;  /* maintains aspect ratio */
+}
+
+.nav a {
+    color: #6c6a77; /* Lighter than the background but not white */
+    text-decoration: none;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s; /* Smooth transition for hover effect */
+}
+
+.nav a:hover, .nav a.active {
+    color: white; /* Text becomes white on hover or when active */
+}
+
+.nav a, .nav a:hover, .nav a:focus {
+    color: #6c6a77; /* Default state color */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem; /* Increased padding for better touch targets */
+}
+
+.nav li.active a {
+    border-top: 3px solid #4d4de0; /* Purple bar on top of the active link */
+}
+
+.nav ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    display: flex;
+    gap: 1rem;
+}
+
+.nav a:hover, .nav a:focus {
+    color: white; /* Color on hover and focus */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #121217;
+}
+.item-container {
+    display: grid;
+    grid-template-rows: auto auto auto auto; /* Creates four rows */
+    grid-gap: 10px; /* Space between grid items */
+    align-items: center; /* Center items vertically */
+    justify-items: center; /* Center items horizontally */
+    background-color: #1C1D26; /* slightly lighter than the background */
+    border-radius: 3px; /* rounded corners */
+    padding: 20px;
+    margin: 10px;
+}
+
+.item-image, .item-name, .item-price {
+    max-width: 100%; /* This will ensure that the content does not exceed the width of the container */
+    height: auto; /* This will maintain the aspect ratio of the images */
+}
+
+.item-name {
+    color: #aaa; /* slightly lighter color */
+    font-size: 10pt;
+    font: Poppins, sans-serif;
+    margin-top: 0px; /* Space between image and name */
+}
+
+.item-price {
+    color: white;
+    font: Poppins, sans-serif;
+    font-size: 18pt;
+}
+
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* adjust as needed */
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+}
+
+.item-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    align-items: end; /* Aligns content at the bottom */
+    justify-items: center; /* Center items horizontally */
+    background-color: #1C1D26; /* slightly lighter than the background */
+    border-radius: 8px; /* rounded corners */
+    padding: 20px;
+    position: relative; /* Needed for absolute positioning of the buy button */
+    height: 100%; /* Ensure all containers are of equal height */
+    transition: background-color 0.15s; /* Smooth transition for hover effect */
+}
+
+.item-image {
+    grid-row: 1 / 2;
+    max-width: 80%; /* Limits image width, adjust as needed */
+    max-height: 150px; /* Limits image height, adjust for your needs */
+    object-fit: contain; /* Ensures the image maintains aspect ratio */
+    justify-self: center; /* Center the image horizontally */
+}
+
+.item-name, .item-price {
+    font-family: Poppins, sans-serif;
+    grid-column: 1;
+    justify-self: start; /* Align text to the start (left) */
+    align-self: end; /* Align text to the bottom */
+    width: 100%; /* Ensure text spans the full width */
+}
+
+.item-price {
+    margin-top: -10px; /* Space between name and price */
+    margin-bottom: -10px; /* Space between price and button */
+}
+
+.buy-button {
+    font-family: Poppins, sans-serif;
+    position: absolute; /* Absolute positioning relative to the container */
+    bottom: 10px; /* 10px from the bottom */
+    right: 10px; /* 10px from the right */
+    padding: 10px 20px; /* Padding for aesthetics */
+    background-color: #2425DB; /* Button color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners for the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.15s; /* Smooth transition for hover effect */
+}
+
+.buy-button:hover {
+    background-color: #252599; /* Lighter shade of button color on hover */
+}
+
+.buy-button:active {
+    background-color: #1E1F8A; /* Darker shade of button color on click */
+}/* animate transition for the button */
+
+
+.item-container:hover {
+    background-color: #313244; /* Lighter shade of background color on hover */
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background-color: #1C1D26;
+    padding: 20px;
+    border-radius: 5px;
+    width: 500px;
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: white;
+    font-family: Poppins, sans-serif;
+}
+
+.modal-body {
+    color: white;
+    font-family: Poppins, sans-serif;
+    margin-bottom: 10px;
+    img {
+        width: 200px;
+        height: auto;
+        border-radius: 5px;
+    }
+}
+
+.modal-header, .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header {
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-footer {
+    border-top: 1px solid #1C1D26;
+}
+
+.close-button {
+    cursor: pointer;
+}
+.user-img {
+    height: 30px;
+    width: auto;
+    object-fit: cover; /* Ensures the image covers the area, useful if the images aren't perfectly square */
+    border-radius: 50%;  /* Optional: makes the image round */
+    background-color: #000; /* Fallback color */
+}
+
