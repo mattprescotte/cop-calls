@@ -15,15 +15,22 @@ import {render} from "@testing-library/react";
 // Sample chart data
 const pdata = [];
 const data = [];
-for (let num = 30*52; num >= 0; num -= 30){
-    pdata.push({
-        name: subDays(new Date(), num).toISOString().substr(0, 7),
-        AfternoonIncidents: 50,
-        NightIncidents: 10,
-        LateNightIncidents: 20,
-        MorningIncidents: 40
-    })
-}
+try {
+    const response = await fetch('http://localhost:5000/time-of-day?timeUnits=Month'); 
+    const jsonData = await response.json();
+    for (let num = 0; num < jsonData.length; num++){
+        pdata.push({
+            date_: jsonData[num][0],
+            Latenight_Incidents: jsonData[num][1],
+            Morning_Incidents: jsonData[num][2],
+            Afternoon_Incidents: jsonData[num][3],
+            Night_Incidents: jsonData[num][4]
+        })
+    }
+
+  } catch (error) {
+    console.error('Unable to fetch data:', error);
+  }
 for (let num = 0; num < pdata.length; num++){
     data.push(pdata[num])
 }
@@ -64,7 +71,7 @@ function Q1() {
                 data.pop();
             }
             for (let i = 0; i<pdata.length; i++){
-                if (pdata[i].name >= user && pdata[i].name <= pass){
+                if (pdata[i].date_ >= user && pdata[i].date_ <= pass){
                     data.push(pdata[i])
                 }
             }
@@ -78,7 +85,7 @@ function Q1() {
     }
     return (
         <>
-            <h1 className="text-heading">Query 1 Graph</h1>
+            <h1 className="text-heading">What is the cumulative total number of incidents for different times of day?</h1>
             <ResponsiveContainer width="100%" aspect={3}>
                 <LineChart data={data} margin={{left: 20}}>
                     <CartesianGrid/>
@@ -91,13 +98,13 @@ function Q1() {
                     />
                     <Tooltip/>
                     <Line
-                        dataKey="AfternoonIncidents"
+                        dataKey="Afternoon_Incidents"
                         stroke="black"
                         activeDot={{r: 8}}
                     />
-                    <Line dataKey="NightIncidents" stroke="red" activeDot={{r: 8}}/>
-                    <Line dataKey="LateNightIncidents" stroke="green" activeDot={{r: 8}}/>
-                    <Line dataKey="MorningIncidents" stroke="blue" activeDot={{r: 8}}/>
+                    <Line dataKey="Night_Incidents" stroke="red" activeDot={{r: 8}}/>
+                    <Line dataKey="Latenight_Incidents" stroke="green" activeDot={{r: 8}}/>
+                    <Line dataKey="Morning_Incidents" stroke="blue" activeDot={{r: 8}}/>
                 </LineChart>
             </ResponsiveContainer>
             <div className="State">
