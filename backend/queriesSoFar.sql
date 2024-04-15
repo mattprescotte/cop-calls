@@ -99,3 +99,76 @@ SELECT jar.Year, jar.JuvenileArrestRate, aar.AdultArrestRate
 FROM JuvenileArrestRate jar, AdultArrestRate aar
 WHERE jar.Year = aar.Year;
 
+--Find all the instances of the top three crimes committed against the largest group of victims by heritage and provide a description, crime code, and location of the crime
+WITH Greatest_Victims (VictimDescent, VictimCount) as 
+    (SELECT VictimDescent, count(*) as VictimCount
+    FROM Victims
+    GROUP BY VictimDescent
+    ORDER BY VictimDescent ASC ),
+    
+TopCrimesAgainstLargestVictimDescent AS(
+SELECT CrimeCode
+FROM IncidentCrimes
+WHERE DRNO IN (
+        SELECT DRNO
+        FROM Incidents
+        WHERE VictimCode IN (
+            SELECT VictimCode
+            FROM Victims
+            WHERE VictimDescent =(
+                SELECT VictimDescent
+                FROM Greatest_Victims
+                WHERE VictimCount =(
+                    SELECT MAX(VictimCount)
+                    FROM Greatest_Victims
+                    )
+                )
+            )
+        )
+     GROUP BY CrimeCode
+ORDER BY COUNT(CrimeCode) DESC
+FETCH FIRST 3 ROWS ONLY), 
+
+RecordsOFTopCrimes AS (
+SELECT DRNO, CrimeCode 
+FROM IncidentCrimes
+WHERE CrimeCode IN (SELECT CrimeCode FROM TopCrimesAgainstLargestVictimDescent)),
+
+Loc AS ( 
+SELECT LAT, LON
+FROM Incidents 
+WHERE  Incidents.DRNO IN (SELECT DRNO FROM RecordsOfTopCrimes)),
+
+CrimeAreas AS (
+SELECT AREA, Locations.LAT, Locations.LON
+FROM Locations, Loc
+WHERE Locations.LAT = Loc.LAT AND Locations.LON = Loc.LON), 
+
+LinkedAreaIncidents AS (
+SELECT DISTINCT AREA, DRNO
+FROM Incidents
+JOIN CrimeAreas ON Incidents.LAT = CrimeAreas.LAT AND Incidents.LON = CrimeAreas.LON
+ORDER BY DRNO DESC), 
+
+CodesForCrime AS (
+SELECT AREA, CrimeCode, LinkedAreaIncidents.DRNO
+FROM LinkedAreaIncidents, IncidentCrimes
+WHERE LinkedAreaIncidents.DRNO = IncidentCrimes.DRNO),
+
+UniqueCrimes AS(
+SELECT Distinct DRNO, CrimeCode
+FROM IncidentCrimes 
+Where CrimeCode IN (SELECT CRIMECODE FROM TopCrimesAgainstLargestVictimDescent)),
+
+TopCrimeLoc AS (
+SELECT UniqueCrimes.CrimeCode,  Area
+From CodesForCrime, UniqueCrimes
+WHERE UniqueCrimes.DRNO = CodesForCrime.DRNO),
+
+CrimeTop AS (
+SELECT TopCrimeLoc.CrimeCode, Crimes.CrimeDescription, TopCrimeLoc.Area
+FROM Crimes, TopCrimeLoc
+Where Crimes.CrimeCode = TopCrimeLoc.CrimeCode )
+
+Select*
+FROM CrimeTop;
