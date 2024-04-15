@@ -25,7 +25,7 @@ def index():
     return jsonify(result)
 
 @app.route('/home')
-def topCrimes3():
+def homePage():
     myQuery = """
     SELECT COUNT(*)
     FROM Incidents
