@@ -194,3 +194,42 @@ WITH Greatest_Victims (VictimDescent, VictimCount) as
                 SELECT MAX(VictimCount)
                 FROM Greatest_Victims
                 );
+
+--Q5 Find the change over time (2020-2024) of crime counts by crime
+WITH 
+Crimes_2020 AS (    
+SELECT DRNO, DATEOCC
+FROM Incidents
+WHERE DATEOCC > to_date('01-JAN-20', 'DD-MON-YY') AND DATEOCC < to_date('31-DEC-20','DD-MON-YY')),
+
+Crimes_2024 AS (    
+SELECT DRNO, DATEOCC
+FROM Incidents
+WHERE DATEOCC >= to_date('01-JAN-24', 'DD-MON-YY') AND DATEOCC <= to_date('31-DEC-24','DD-MON-YY')), 
+
+types_of_crimes20 AS (
+SELECT ic.CrimeCode, COUNT(ic.CrimeCode) as Crime_Count
+FROM IncidentCrimes ic
+JOIN Crimes_2020 c20 ON ic.DRNO = c20.DRNO
+GROUP BY ic.CrimeCode),
+
+types_of_crimes24 AS (
+SELECT ic.CrimeCode, COUNT(ic.CrimeCode) as Crime_Count
+FROM IncidentCrimes ic
+JOIN Crimes_2024 c24 ON ic.DRNO = c24.DRNO
+GROUP BY ic.CrimeCode),
+
+diff_crimes AS (
+SELECT tc20.CrimeCode as CrimeCode, tc20.Crime_Count as Crime_2020, tc24.Crime_Count as Crime_2024, (tc24.Crime_Count - tc20.Crime_Count) as Crime_Change
+FROM types_of_crimes20 tc20, types_of_crimes24 tc24
+WHERE tc20.CrimeCode = tc24.CrimeCode
+ORDER BY tc20.CrimeCode ASC), 
+
+crime_change_desc AS (
+SELECT c.CrimeCode, c.CrimeDescription, df.Crime_2020, df.Crime_2024,  df.Crime_Change
+FROM diff_crimes df
+JOIN Crimes c ON df.CrimeCode = c.CrimeCode)
+
+
+SELECT *
+FROM crime_change_desc;
