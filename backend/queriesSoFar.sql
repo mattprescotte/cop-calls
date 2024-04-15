@@ -174,3 +174,23 @@ GROUP BY Crimes.CrimeCode, Crimes.CrimeDescription )
 
 Select*
 FROM CrimeTop;
+
+--List of all heritages and their victim count over 2020-2024
+SELECT VictimDescent, count(*) as VictimCount
+    FROM Victims
+    GROUP BY VictimDescent
+    ORDER BY VictimDescent ASC;
+
+--List the heritage with the most victims over 2020-2024
+WITH Greatest_Victims (VictimDescent, VictimCount) as 
+    (SELECT VictimDescent, count(*) as VictimCount
+    FROM Victims
+    GROUP BY VictimDescent
+    ORDER BY VictimDescent ASC )
+    
+        SELECT VictimDescent, VictimCount
+        FROM Greatest_Victims
+        WHERE VictimCount =(
+                SELECT MAX(VictimCount)
+                FROM Greatest_Victims
+                );
