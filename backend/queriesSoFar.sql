@@ -166,11 +166,10 @@ From CodesForCrime, UniqueCrimes
 WHERE UniqueCrimes.DRNO = CodesForCrime.DRNO),
 
 CrimeTop AS (
-SELECT Crimes.CrimeCode, Crimes.CrimeDescription
-FROM Crimes
-JOIN TopCrimesAgainstLargestVictimDescent ON Crimes.CrimeCode = TopCrimesAgainstLargestVictimDescent.CrimeCode 
-WHERE ROWNUM <= 3
-GROUP BY Crimes.CrimeCode, Crimes.CrimeDescription )
+SELECT TopCrimeLoc.CrimeCode, Crimes.CrimeDescription, COUNT(TopCrimeLoc.CrimeCode) as Crime_Count
+FROM Crimes, TopCrimeLoc
+Where Crimes.CrimeCode = TopCrimeLoc.CrimeCode
+Group BY TopCrimeLoc.CrimeCode, Crimes.CrimeDescription)
 
 Select*
 FROM CrimeTop;
